@@ -2,6 +2,6 @@ vscode:
   extensions:
     - ms-python.python
     - ms-python.vscode-pylance
-tasks:
+    - KylinIdeTeam.pythontasks:
   - init: pip install -r ./requirements.txt
     command: ptw
