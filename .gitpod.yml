@@ -1,0 +1,7 @@
+vscode:
+  extensions:
+    - ms-python.python
+    - ms-python.vscode-pylance
+tasks:
+  - init: pip install -r ./requirements.txt
+    command: python -m ptw
