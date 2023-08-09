@@ -1,6 +1,33 @@
+def round_earth_cell_at(game, row, column):
+    if column < 0:
+        column = column + game.width
+    if column >= game.width:
+        column = game.width - column
+    if row < 0:
+        row = row + game.height
+    if row >= game.height:
+        row = game.height - row
+    return game._cells[row][column]
+
+def flat_earth_cell_at(game, row, column):
+    if column < 0:
+        return None
+    if column >= game.width:
+        return None
+    if row < 0:
+        return None
+    if row >= game.height:
+        return None
+    return game._cells[row][column]
+
 class Game:
-    def __init__(self, cells):
+    def __init__(self, cells, cell_at_fn=flat_earth_cell_at):
         self._cells = cells
+        self._cell_at_fn = cell_at_fn
+
+
+    def __eq__(self, other):
+        return self._cells == other._cells
 
     def next_generation(self):
         return Game([self.next_row_generation(row) for row in range(self.height)])
@@ -13,14 +40,14 @@ class Game:
 
     def neighbours_for(self, row, column):
         neighbours = [
-            self.cell_at(row - 1, column - 1),
-            self.cell_at(row - 1, column),
-            self.cell_at(row - 1, column + 1),
-            self.cell_at(row, column - 1),
-            self.cell_at(row, column + 1),
-            self.cell_at(row + 1, column - 1),
-            self.cell_at(row + 1, column),
-            self.cell_at(row + 1, column + 1),
+            self._cell_at_fn(self, row - 1, column - 1),
+            self._cell_at_fn(self, row - 1, column),
+            self._cell_at_fn(self, row - 1, column + 1),
+            self._cell_at_fn(self, row, column - 1),
+            self._cell_at_fn(self, row, column + 1),
+            self._cell_at_fn(self, row + 1, column - 1),
+            self._cell_at_fn(self, row + 1, column),
+            self._cell_at_fn(self, row + 1, column + 1),
         ]
         return without_nones(neighbours)
 
@@ -81,6 +108,20 @@ class Cell:
 
     def char_repr(self):
         return "#" if self.is_alive() else " "
+
+
+class GameMaker:
+    def make_game(self, width, height, alive_cells):
+        # cells = [[choice([dead_cell, living_cell])() for c in range(80)] for r in range(40)]
+        cells = [
+            [dead_cell() for column in range(3)] for row in range(3)
+        ]
+
+        for alive_cell in alive_cells:
+            row, column = alive_cell
+            cells[row][column] = living_cell()
+
+        return Game(cells)
 
 
 def living(neighbours):
