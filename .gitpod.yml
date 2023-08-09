@@ -4,4 +4,4 @@ vscode:
     - ms-python.vscode-pylance
 tasks:
   - init: pip install -r ./requirements.txt
-    command: python -m ptw
+    command: ptw
